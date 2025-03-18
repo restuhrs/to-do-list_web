@@ -3,7 +3,7 @@
 @push('css')
 <style>
     body{
-        background-color: #E3FCBF;
+        background-color: #87CEEB;
     }
 
     .card:hover{
@@ -142,12 +142,6 @@
                 'deskripsi' : deskripsi,
             }
 
-            $.ajaxSetup({
-                headers : {
-                    'X-CSRF-TOKEN' : $('meta[name = "csrf-token"]').attr('content')
-                }
-            });
-
             $.ajax({
                 type: "POST",
                 url: "{{ route('tugas.store') }}",
@@ -170,15 +164,11 @@
         }
 
         function status(id_tugas){
-            $.ajaxSetup({
-                headers : {
-                    'X-CSRF-TOKEN' : $('meta[name = "csrf-token"]').attr('content')
-                }
-            });
 
             $.ajax({
                 type: "PUT",
-                url: "{{ route('tugas.updateStatus', '') }}/" + id_tugas,
+                url: `/todolist/status/${id_tugas}`,
+                data: data,
                 dataType: "json",
                 success: function(response) {
                     if (response.status == 200) {
@@ -192,16 +182,12 @@
         }
 
         function hapus(id_tugas) {
-            $.ajaxSetup({
-                headers : {
-                    'X-CSRF-TOKEN' : $('meta[name = "csrf-token"]').attr('content')
-                }
-            });
             // if (!confirm("Apakah Anda yakin ingin menghapus tugas ini?")) return;
 
             $.ajax({
                 type: "DELETE",
-                url: "{{ route('tugas.delete', '') }}/" + id_tugas,
+                url: `/todolist/${id_tugas}`,
+                data: data,
                 dataType: "json",
                 success: function(response) {
                     if (response.status == 200) {
