@@ -22,8 +22,8 @@
 @endpush
 @section('content')
 <div class="input-group my-3">
-    <input type="text" class="form-control" id="key" placeholder="Cari Tugas" aria-label="Recipient's username" aria-describedby="button-addon2">
-    <button class="btn btn-success" type="button" id="button-addon2" data-bs-toggle="modal" data-bs-target="#exampleModal" id="button-tambah">Tambah</button>
+    <input type="text" class="form-control" id="key" placeholder="Cari Tugas" aria-label="Recipient's username">
+    <button class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal" id="button-tambah">Tambah</button>
 </div>
 @includeIf('tugas.modal')
 @includeIf('tugas.detail-tugas')
@@ -36,7 +36,6 @@
     <script>
         $("#key").on("keyup", function () {
             let key = $(this).val();
-            console.log(key);
             $.ajax({
                 type: "GET",
                 url: "{{ route('tugas.data') }}",
@@ -69,7 +68,17 @@
                                 </div>
                             </div>
                         `);
-                    })
+                    });
+                    }
+                    else if(response.length == 0) {
+                        $('#container-list').append(`
+                            <div class="alert alert-danger text-center">
+                                <h5>Tidak ditemukan</h5>
+                            </div>
+                        `);
+                    }
+                    else{
+                        dataTugas();
                     }
                 }
             });
@@ -106,7 +115,17 @@
                                 </div>
                             </div>
                         `);
-                    })
+                    });
+                    }
+                    else if(response.length == 0) {
+                        $('#container-list').append(`
+                            <div class="alert alert-danger text-center">
+                                <h5>Tidak ditemukan</h5>
+                            </div>
+                        `);
+                    }
+                    else{
+                        dataTugas();
                     }
                 }
             });
@@ -137,10 +156,10 @@
                 success: function(response) {
                     if (response.status == 200) {
                         $('#judul').val("");
-                        $('deskripsi').val("");
-                        $('.modal').removeClass('show');
-                        $('.modal').css('display', 'none');
+                        $('#deskripsi').val("");
+                        $('#exampleModal').modal('hide');
                         $('.modal-backdrop').remove();
+                        $('body').removeClass('modal-open');
                         $('body').removeAttr('class');
                         $('body').removeAttr('style');
                         $('#tambah').attr('onclick', 'tambah()');
@@ -159,12 +178,37 @@
 
             $.ajax({
                 type: "PUT",
-                url: "{{ url('/todoliststatus') }}/" + id_tugas,
+                url: "{{ route('tugas.updateStatus', '') }}/" + id_tugas,
                 dataType: "json",
                 success: function(response) {
                     if (response.status == 200) {
-                        console.log('Berhasil');
+                        alert("Tugas berhasil ditandai")
                         dataTugas();
+                    } else {
+                        alert("Gagal menandai tugas")
+                    }
+                }
+            });
+        }
+
+        function hapus(id_tugas) {
+            $.ajaxSetup({
+                headers : {
+                    'X-CSRF-TOKEN' : $('meta[name = "csrf-token"]').attr('content')
+                }
+            });
+            // if (!confirm("Apakah Anda yakin ingin menghapus tugas ini?")) return;
+
+            $.ajax({
+                type: "DELETE",
+                url: "{{ route('tugas.delete', '') }}/" + id_tugas,
+                dataType: "json",
+                success: function(response) {
+                    if (response.status == 200) {
+                        alert("Tugas berhasil dihapus");
+                        dataTugas();
+                    } else {
+                        alert("Gagal menghapus tugas");
                     }
                 }
             });

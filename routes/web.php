@@ -8,6 +8,7 @@ Route::get('/', function () {
 });
 
 Route::get('/todolist', [TugasController::class, 'index'])->name('tugas.index');
-Route::get('/data', [TugasController::class, 'data'])->name('tugas.data');
+Route::get('/todolist/data', [TugasController::class, 'data'])->name('tugas.data');
 Route::post('/todolist', [TugasController::class, 'store'])->name('tugas.store');
-Route::put('/todoliststatus/{id_tugas}', [TugasController::class, 'updateStatus'])->name('tugas.updateStatus');
+Route::put('/todolist/status/{id_tugas}', [TugasController::class, 'updateStatus'])->name('tugas.updateStatus');
+Route::delete('/todolist/{id_tugas}', [TugasController::class, 'destroy'])->name('tugas.delete');

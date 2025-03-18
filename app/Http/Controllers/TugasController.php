@@ -16,8 +16,15 @@ class TugasController extends Controller
         return view('tugas.index', $data);
     }
 
-    public function data(){
-        $tugas = Tugas::all(); //sama dgn select * from tugas
+    public function data(Request $request){
+        if($request->key){
+            $tugas = Tugas::where('judul', 'like', '%'. $request->key.'%')
+            ->orWhere('deskripsi', 'like', '%'. $request->key.'%')
+            ->get();
+
+            return response()->json(['tugas' => $tugas]);
+        }
+        $tugas = Tugas::get(); //sama dgn select * from tugas | bisa menggunakan all
         return response()->json(['tugas' => $tugas]);
     }
 
@@ -35,10 +42,32 @@ class TugasController extends Controller
     public function updateStatus(Request $request, $id_tugas){
         $tugas = Tugas::find($id_tugas);
         $tugas->status = $tugas->status == 1 ? 0 : 1;
-        $tugas->save();
 
-        return response()->json([
-            'status' => 200
-        ]);
+        if($tugas){
+            $tugas->save();
+            $tugas->delete();
+            return response()->json([
+                "status" => 200
+            ]);
+        } else {
+            return response()->json([
+                "status" => 500
+            ]);
+        }
+    }
+
+    public function destroy($id_tugas){
+        $tugas = Tugas::find($id_tugas);
+
+        if($tugas){
+            $tugas->delete();
+            return response()->json([
+                "status" => 200
+            ]);
+        } else {
+            return response()->json([
+                "status" => 500
+            ]);
+        }
     }
 }
